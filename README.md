@@ -2,9 +2,10 @@ INFAL224 - Développement avancé avec un framework
 # Symfony
 
 Documentation Symfony :
-
 [https://symfony.com/doc/current/index.html](https://symfony.com/doc/current/index.html)
 
+Cours :
+https://github.com/leahpar/cesi-symfony
 
 ## Composants
 
@@ -55,6 +56,7 @@ Doctrine = Entity Manager = Manipulation des données / abstraction de la base d
 Twig = Moteur de template
 
 **La "magie" d'un framework**
+
 Annotations
 
 Dependancy Injection
@@ -160,8 +162,8 @@ cd my_project_name
 
 ```
 my_project_name/
-├── .composer.json  # Configuration des packages à installer
-├── .composer.lock  # Liste des packages installés
+├── composer.json   # Configuration des packages à installer
+├── composer.lock   # Liste des packages installés
 | 
 ├── config/         # configuration du projet
 ├── .env            # configuration de l'environnement (défaut)
@@ -282,7 +284,7 @@ public function adminPage() {...}
 
 ```php
 // PHP 8 => attributs
-#[Route('/'admin)]
+#[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
 public function adminPage() {...}
 ```
@@ -368,7 +370,18 @@ class PostType extends AbstractType
             ->add('content')
             ->add('date')
         ;
+    }
+}
+```
+>💡Astuce : `php bin/console make:form`
 
+```php
+// src/Form/PostType.php
+
+class PostType extends AbstractType
+{
+    public function buildForm(...):
+    {
 		// configuration manuelle des champs
         $builder
             ->add('title', TextType::class, [
@@ -383,11 +396,11 @@ class PostType extends AbstractType
                 "widget" => "single_text",
             ])
         ;
-
     }
 }
 ```
->💡Astuce : `php bin/console make:form`
+Liste des types disponibles :
+https://symfony.com/doc/current/reference/forms/types.html
 
 Utilisation dans le contrôleur :
 ```php
@@ -404,7 +417,6 @@ public function formulaire()
 ```
 
 Utilisation dans le template :
-https://symfony.com/doc/current/form/form_customization.html
 ```twig
 {# On laisse Symfony gérer tout le formulaire #}
 {{ form(form) }}
@@ -426,16 +438,89 @@ https://symfony.com/doc/current/form/form_customization.html
     </div>
 {{ form_end(form) }}
 ```
+https://symfony.com/doc/current/form/form_customization.html
+
+![enter image description here](https://github.com/leahpar/imgs/raw/master/form.jpg)
 
 Traiter la soumission du formulaire dans le contrôleur :
 
+**Nouvelle entité**
+```php
+#[Route('/posts/new', name: 'post_new', methods: ['GET', 'POST'])]
+public function new(Request $request, EntityManagerInterface $em)
+{
+	// Nouveau Post "vierge"
+    $post = new Post();
+
+    // Création formulaire
+    $form = $this->createForm(PostType::class, $post);
+
+    // "Remplissage" du formulaire depuis la requête
+    $form->handleRequest($request);
+
+	// Si formulaire soumis et valide
+    if ($form->isSubmitted() && $form->isValid()) {
+		
+		// ici, $post contient les données soumises
+
+        // On enregistre
+        $em->persist($post);
+        $em->flush();
+
+        // On redirige vers l'affichage du post par exemple
+        return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
+    }
+
+    // Si formulaire non soumis OU formulaire invalide
+    return $this->render('post/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+```
+
+**Modification d'une entité**
+```php
+#[Route('/posts/{id}/edit', name: 'post_edit', methods: ['GET', 'POST'])]
+public function new(Post $post, Request $request, EntityManagerInterface $em)
+{
+    // Création formulaire
+    $form = $this->createForm(PostType::class, $post);
+
+    // "Remplissage" du formulaire depuis la requête
+    $form->handleRequest($request);
+
+	// Si formulaire soumis et valide
+    if ($form->isSubmitted() && $form->isValid()) {
+		
+		// ici, $post contient les données soumises
+
+        // On enregistre
+        $em->persist($post);
+        $em->flush();
+
+        // On redirige vers l'affichage du post par exemple
+        return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
+    }
+
+    // Si formulaire non soumis OU formulaire invalide
+    return $this->render('post/new.html.twig', [
+        'post' => $post,
+        'form' => $form->createView(),
+    ]);
+}
+```
+>🔥Duplication de code !
+
+**2 EN 1 !**
 ```php
 #[Route('/posts/new', name: 'post_new', methods: ['GET', 'POST'])]
 #[Route('/posts/{id}/edit', name: 'post_edit', methods: ['GET', 'POST'])]
 public function new(?Post $post, Request $request, EntityManagerInterface $em)
 {
+	$post = $post ?? new Post();
+
     // Création formulaire
-    $form = $this->createForm(PostType::class, $post ?? new Post());
+    $form = $this->createForm(PostType::class, $post);
 
     // "Remplissage" du formulaire depuis la requête
     $form->handleRequest($request);
@@ -673,6 +758,15 @@ class Post
     private $date;
 }
 ```
+**Création de la base de donnée :**
+
+```
+php bin/console doctrine:database:create
+```
+```
+Created database `myBlog` for connection named default
+```
+
 
 **Voir les requêtes de migration de la BDD :**
 ```
@@ -829,7 +923,3 @@ public function showPost(Post $post)
 
 
 ==GOTO: §Form==
-
-
-
-To be continued...

@@ -1,30 +1,46 @@
 # Mon 1er projet Symfony
 
-Installation :
+## Installation :
+
+Clone du projet
 
 ```
-# Clone du projet
 git clone git@github.com:leahpar/cesi-symfony.git
 cd cesi-symfony/myBlog
+```
 
-# Créer le fichier .env.local
-# Et compléter les infos nécessaires (accès BDD...)
+Créer le fichier `.env.local`
+Et compléter les infos nécessaires (accès BDD...)
 
-# installation des dépendantes
+installation des dépendantes
+
+```
 composer install
+```
 
-# Création base de données (si pas déjà fait)
+Création base de données (si pas déjà fait)
+
+```
 php bin/console doctrine:database:create
+```
 
-# Mise à jour structure de la base de données (si pas déjà fait)
+Mise à jour structure de la base de données (si pas déjà fait)
+
+```
 php bin/console doctrine:schema:update --dump-sql
 php bin/console doctrine:schema:update --force
+```
 
-# Démarrage du serveur web symfony (sauf si apache/nginx...) 
+Démarrage du serveur web symfony (sauf si apache/nginx...) 
+
+```
 symfony server:start -d
+```
 
-# Enjoy !
+**Enjoy !**
 
-# Arrêt du serveur web
+Arrêt du serveur web
+
+```
 symfony server:stop
 ```

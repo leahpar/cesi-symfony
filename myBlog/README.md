@@ -13,7 +13,14 @@ cd cesi-symfony/myBlog
 # installation des dépendantes
 composer install
 
-# Serveur web symfony 
+# Création base de données (si pas déjà fait)
+php bin/console doctrine:database:create
+
+# Mise à jour structure de la base de données (si pas déjà fait)
+php bin/console doctrine:schema:update --dump-sql
+php bin/console doctrine:schema:update --force
+
+# Démarrage du serveur web symfony (sauf si apache/nginx...) 
 symfony server:start -d
 
 # Enjoy !

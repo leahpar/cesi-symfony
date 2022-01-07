@@ -1,0 +1,27 @@
+{% extends 'blog/base.html.twig' %}
+
+{% block content %}
+    <div class="border">
+        {{ form_start(form) }}
+        <div>
+            {{ form_errors(form) }}
+        </div>
+        <div>
+            {{ form_row(form.title) }}
+        </div>
+        <div>
+            {{ form_row(form.content) }}
+        </div>
+        <div>
+            {{ form_row(form.date) }}
+        </div>
+        <div>
+            {{ form_row(form.author) }}
+        </div>
+        <input type="submit">
+        {{ form_end(form) }}
+
+        <a href="{{ path('post_list') }}">Retour</a>
+    </div>
+{% endblock %}
+

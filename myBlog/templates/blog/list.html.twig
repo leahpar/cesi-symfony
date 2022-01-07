@@ -1,0 +1,33 @@
+{% extends 'blog/base.html.twig' %}
+
+{% block content %}
+
+    <div class="border">
+    {% if search is defined %}
+        <p>
+            {{ posts|length }}
+            résultat{% if posts|length > 1 %}s{% endif %}
+            pour '{{ search }}'
+        </p>
+    {% endif %}
+
+    {% for post in posts %}
+
+        <a href="{{ path('post_show', {id: post.id}) }}">
+            #{{ post.id }}
+            {{ post.title }}
+        </a>
+        <br>
+    {% endfor %}
+
+    <br>
+    <a href="{{ path('post_last') }}">Dernier post consulté</a>
+
+    <br>
+
+    <a href="{{ path('post_new') }}">Ajouter un post</a>
+
+    </div>
+
+{% endblock %}
+

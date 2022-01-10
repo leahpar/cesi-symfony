@@ -15,11 +15,14 @@ class Author
     #[ORM\Column(type: 'integer')]
     private int $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private string $name;
 
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Post::class, orphanRemoval: true)]
-    private Collection $posts;
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'author', orphanRemoval: true)]
+    private $posts;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $email = null;
 
     public function __construct()
     {
@@ -76,5 +79,17 @@ class Author
     public function __toString(): string
     {
         return $this->getName();
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
     }
 }

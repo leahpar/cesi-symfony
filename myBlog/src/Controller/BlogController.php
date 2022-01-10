@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/posts', name: 'post_')]
@@ -23,6 +25,18 @@ class BlogController extends AbstractController
     public function list(EntityManagerInterface $em)
     {
         $posts = $em->getRepository(Post::class)->findAll();
+
+        return $this->render('blog/list.html.twig', [
+            'posts' => $posts,
+        ]);
+    }
+
+    #[Route('/author-{name}', name: 'author')]
+    public function listAuthor(Author $author, EntityManagerInterface $em)
+    {
+        $posts = $em->getRepository(Post::class)->findBy([
+            'author' => $author
+        ]);
 
         return $this->render('blog/list.html.twig', [
             'posts' => $posts,
@@ -71,11 +85,29 @@ class BlogController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ["POST"])]
-    public function delete(Post $post, EntityManagerInterface $em)
-    {
+    public function delete(
+        Post $post,
+        EntityManagerInterface $em,
+        MailerInterface $mailer
+    ) {
+
+        $message = 'Votre post #' . $post->getId() . ' "' . $post->getTitle() . '" a été supprimé';
+
         $em->remove($post);
         $em->flush();
+
+        $author = $post->getAuthor();
+        if ($author->getEmail()) {
+            $email = (new Email())
+                ->from('hello@example.com')
+                ->to($author->getEmail())
+                ->subject('Un de vos posts a été supprimé')
+                ->text($message);
+            $mailer->send($email);
+        }
+
         $this->addFlash('success', 'Post supprimé');
+
         return $this->redirectToRoute('post_list');
     }
 

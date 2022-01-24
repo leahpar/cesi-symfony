@@ -29,6 +29,7 @@ class PasswordSubscriber implements EventSubscriberInterface
         $user->setPassword(
             $this->passwordHasher->hashPassword($user, $plainPassword)
         );
+        $user->setPlainPassword(null);
     }
 
     public function onBeforeEntityUpdatedEvent($event)
@@ -42,6 +43,7 @@ class PasswordSubscriber implements EventSubscriberInterface
             $user->setPassword(
                 $this->passwordHasher->hashPassword($user, $user->getPlainPassword())
             );
+            $user->setPlainPassword(null);
         }
     }
 

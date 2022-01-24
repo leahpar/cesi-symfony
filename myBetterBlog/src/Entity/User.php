@@ -33,7 +33,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'auteur', targetEntity: Post::class, orphanRemoval: true)]
     private $posts;
 
-    private ?string $plainPassword;
+    private ?string $plainPassword = null;
 
     public function __construct()
     {

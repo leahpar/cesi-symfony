@@ -24,9 +24,9 @@ php bin/console make:admin:crud
 
 Trucs à voir 
 
-- [ ] Couche sécurité
-- [ ] "hack" localhost
-- [ ] Text editor
-- [ ] Rôles
-- [ ] Gestion password (plainPassword / EventSubscriber)
-- [ ] Traduction
+- [X] Couche sécurité
+- [X] "hack" localhost
+- [X] Text editor
+- [X] Traduction
+- [X] Rôles
+- [X] Gestion password (plainPassword / EventSubscriber)

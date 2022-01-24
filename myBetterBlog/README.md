@@ -30,3 +30,7 @@ Trucs à voir
 - [X] Traduction
 - [X] Rôles
 - [X] Gestion password (plainPassword / EventSubscriber)
+- [ ] User impersonation (Composant Security) 
+- [ ] Api Platform (Bundle)
+- [ ] Validator (Composant Symfony)
+- [ ] HTTP Client

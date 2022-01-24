@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Author;
+use App\Entity\User;
 use App\Entity\Post;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -23,7 +23,7 @@ class PostType extends AbstractType
             ])
 
             ->add('author', EntityType::class, [
-                'class' => Author::class,
+                'class' => User::class,
                 'choice_label' => 'name'
             ])
         ;

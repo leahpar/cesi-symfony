@@ -22,9 +22,9 @@ class Post
     #[ORM\Column(type: 'datetime')]
     private \DateTime $date;
 
-    #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'posts')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
-    private Author $author;
+    private User $author;
 
     public function __construct()
     {
@@ -72,12 +72,12 @@ class Post
         return $this;
     }
 
-    public function getAuthor(): ?Author
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    public function setAuthor(?Author $author): self
+    public function setAuthor(?User $author): self
     {
         $this->author = $author;
 

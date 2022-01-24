@@ -15,9 +15,13 @@
         <div>
             {{ form_row(form.date) }}
         </div>
+
+        {% if is_granted('ROLE_ADMIN') %}
         <div>
             {{ form_row(form.author) }}
         </div>
+        {% endif %}
+
         <input type="submit">
         {{ form_end(form) }}
 

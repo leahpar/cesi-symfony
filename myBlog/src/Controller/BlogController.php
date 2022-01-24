@@ -2,18 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Author;
+use App\Entity\User;
 use App\Entity\Post;
 use App\Form\PostType;
-use App\Repository\AuthorRepository;
-use App\Repository\PostRepository;
 use App\Service\PostService;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/posts', name: 'post_')]
 class BlogController extends AbstractController
 {
+
     #[Route('/', name: 'list')]
     public function list(EntityManagerInterface $em)
     {
@@ -31,8 +30,22 @@ class BlogController extends AbstractController
         ]);
     }
 
+    #[Route('/me', name: 'list_me')]
+    #[isGranted('ROLE_AUTEUR')]
+    public function listMe(EntityManagerInterface $em)
+    {
+        $user = $this->getUser();
+        $posts = $em->getRepository(Post::class)->findBy([
+            'author' => $user
+        ]);
+
+        return $this->render('blog/list.html.twig', [
+            'posts' => $posts,
+        ]);
+    }
+
     #[Route('/author-{name}', name: 'author')]
-    public function listAuthor(Author $author, EntityManagerInterface $em)
+    public function listAuthor(User $author, EntityManagerInterface $em)
     {
         $posts = $em->getRepository(Post::class)->findBy([
             'author' => $author
@@ -85,6 +98,7 @@ class BlogController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'delete', methods: ["POST"])]
+    #[isGranted("POST_DELETE", 'post')]
     public function delete(
         Post $post,
         EntityManagerInterface $em,
@@ -171,6 +185,7 @@ class BlogController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'edit_form')]
+    #[isGranted("POST_EDIT", 'post')]
     public function editPostFormulaire(Post $post)
     {
         return $this->render('blog/form_edit.html.twig', [
@@ -202,11 +217,46 @@ class BlogController extends AbstractController
     */
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function new(?Post $post, Request $request, EntityManagerInterface $em)
+    #[isGranted('ROLE_AUTEUR')]
+    public function new(Request $request, EntityManagerInterface $em)
     {
-        $post = $post ?? new Post();
+        $user = $this->getUser();
 
+        $post = new Post();
+        $post->setAuthor($user);
+
+        // Création formulaire
+        $form = $this->createForm(PostType::class, $post);
+
+        // "Remplissage" du formulaire depuis la requête
+        $form->handleRequest($request);
+
+        // Si formulaire soumis et valide
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // ici, $post contient les données soumises
+
+            // On enregistre
+            $em->persist($post);
+            $em->flush();
+
+            $this->addFlash('success', 'Post enregistré');
+
+            // On redirige vers l'affichage du post par exemple
+            return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
+        }
+
+        // Si formulaire non soumis OU formulaire invalide
+        return $this->render('blog/new.html.twig', [
+            'post' => $post,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    #[isGranted('POST_EDIT', 'post')]
+    public function edit(Post $post, Request $request, EntityManagerInterface $em)
+    {
         // Création formulaire
         $form = $this->createForm(PostType::class, $post);
 

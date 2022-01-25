@@ -2,10 +2,41 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[ApiResource(
+    collectionOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => ['articles_get']],
+        ],
+        "post" => [
+            "security_post_denormalize" => "is_granted('POST', object)",
+        ],
+    ],
+    itemOperations: [
+        "get" => [
+            'normalization_context' => ['groups' => ['article_get']]
+        ],
+        "put" => [
+            //"security_post_denormalize" => "is_granted('ROLE_ADMIN') or (is_granted('ROLE_AUTEUR') and object.getAuteur() == user and previous_object.getAuteur() == user)",
+            "security_post_denormalize" => "is_granted('PUT', object) and is_granted('PUT', previous_object)"
+        ],
+        "patch" => [
+            "security_post_denormalize" => "is_granted('ROLE_ADMIN') or (is_granted('ROLE_AUTEUR') and object.getAuteur() == user and previous_object.getAuteur() == user)"
+        ],
+        "delete" => [
+            "security" => "is_granted('ROLE_ADMIN')"
+        ],
+    ],
+    attributes: [
+        "pagination_items_per_page" => 5,
+    ],
+)]
 class Post
 {
     #[ORM\Id]
@@ -14,19 +45,25 @@ class Post
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['articles_get', 'article_get'])]
     private $titre;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ApiSubresource]
+    #[Groups(['articles_get', 'article_get'])]
     private $auteur;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['article_get'])]
     private $contenu;
 
     #[ORM\Column(type: 'date')]
+    #[Groups(['articles_get', 'article_get'])]
     private $date;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups(['articles_get', 'article_get'])]
     private $publie;
 
     public function getId(): ?int
@@ -97,6 +134,12 @@ class Post
     public function __toString(): string
     {
         return $this->titre;
+    }
+
+    #[Groups(['articles_get'])]
+    public function getResume(): string
+    {
+        return substr($this->contenu, 0, 100) . "...";
     }
 
 }

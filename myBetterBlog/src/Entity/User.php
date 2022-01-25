@@ -2,15 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'normalization_context' => ['groups' => ['users_get']],
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'normalization_context' => ['groups' => ['user_get']],
+        ]
+    ],
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -19,18 +33,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups(['users_get', 'user_get'])]
     private $email;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['user_get'])]
     private $roles = [];
 
     #[ORM\Column(type: 'string')]
     private $password;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    private $apiToken;
+
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['users_get', 'user_get', 'article_get'])]
     private $nom;
 
     #[ORM\OneToMany(mappedBy: 'auteur', targetEntity: Post::class, orphanRemoval: true)]
+    #[Groups(['user_get'])]
     private $posts;
 
     private ?string $plainPassword = null;
@@ -162,10 +183,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->plainPassword;
     }
 
-    public function setPlainPassword(string $plainPassword): self
+    public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
 
         return $this;
+    }
+
+    public function getApiToken()
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken($apiToken): void
+    {
+        $this->apiToken = $apiToken;
     }
 }

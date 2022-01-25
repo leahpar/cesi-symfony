@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(
@@ -46,6 +47,8 @@ class Post
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['articles_get', 'article_get'])]
+    #[Assert\NotNull]
+    #[Assert\Length(min: 10, max: 50)]
     private $titre;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'posts')]
@@ -56,10 +59,12 @@ class Post
 
     #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['article_get'])]
+    #[Assert\Length(min: 100)]
     private $contenu;
 
     #[ORM\Column(type: 'date')]
     #[Groups(['articles_get', 'article_get'])]
+    #[Assert\GreaterThan('today')]
     private $date;
 
     #[ORM\Column(type: 'boolean')]

@@ -32,5 +32,9 @@ Trucs à voir
 - [X] Gestion password (plainPassword / EventSubscriber)
 - [X] Api Platform (Bundle)
 - [X] Authentification API
-- [ ] Validator (Composant Symfony)
-- [ ] HTTP Client
+- [X] Validator (Composant Symfony)
+- [X] HTTP Client
+- [X] Micro services
+
+
+

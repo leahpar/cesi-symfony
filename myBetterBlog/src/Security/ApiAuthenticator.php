@@ -37,12 +37,12 @@ class ApiAuthenticator extends AbstractAuthenticator
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
 
-        $user = $this->em->getRepository(User::class)->findOneBy(['apiToken' => $apiToken]);
-        if ($user == null) {
-            throw new UserNotFoundException();
-        }
-
-        return new SelfValidatingPassport(new UserBadge($user->getEmail()));
+        //$user = $this->em->getRepository(User::class)->findOneBy(['apiToken' => $apiToken]);
+        //if ($user == null) {
+        //    throw new UserNotFoundException();
+        //}
+        //return new SelfValidatingPassport(new UserBadge($user->getEmail()));
+        return new SelfValidatingPassport(new UserBadge($apiToken));
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

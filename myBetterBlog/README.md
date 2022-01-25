@@ -31,6 +31,6 @@ Trucs à voir
 - [X] Rôles
 - [X] Gestion password (plainPassword / EventSubscriber)
 - [X] Api Platform (Bundle)
-- [ ] Authentification API
+- [X] Authentification API
 - [ ] Validator (Composant Symfony)
 - [ ] HTTP Client

@@ -65,6 +65,7 @@ class FournisseurController extends AbstractController
                 $this->addFlash("success", "OK");
                 
                 $this->logService->log("success", "Nouveau film publié : " . $film['title']);
+                $this->logUwUService->log("success", "Nouveau film publié : " . $film['title']);
                 $this->mailService->send(
                     "admin@microservices.cesi.fr",
                     "Nouveau film publié : " . $film['title'],
@@ -104,6 +105,7 @@ class FournisseurController extends AbstractController
                 $this->addFlash("success", "OK");
 
                 $this->logService->log("success", "Film modifié : " . $film['title']);
+                $this->logUwUService->log("success", "Film modifié : " . $film['title']);
 
                 return $this->redirectToRoute('list');
             }
@@ -128,6 +130,7 @@ class FournisseurController extends AbstractController
             $this->addFlash("success", "Film supprimé !");
 
             $this->logService->log("success", "Film supprimé : " . $film['title']);
+            $this->logUwUService->log("success", "Film supprimé : " . $film['title']);
         }
         catch (\Exception $e) {
             $this->addFlash("error", $e->getCode().': '.$e->getMessage());

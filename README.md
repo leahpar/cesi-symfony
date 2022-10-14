@@ -1,6 +1,7 @@
-INFAL224 - Développement avancé avec un framework
 
-Janvier 2022
+mailto: raphael@bacco.fr
+
+Octobre 2022
 
 # Symfony
 
@@ -9,9 +10,6 @@ Documentation Symfony :
 
 Cours :
 https://github.com/leahpar/cesi-symfony
-
-Le projet microservices, c'est par [ici](projet.md)
-
 
 ## Composants
 
@@ -61,16 +59,6 @@ Doctrine = Entity Manager = Manipulation des données / abstraction de la base d
 
 Twig = Moteur de template
 
-**La "magie" d'un framework**
-
-Annotations
-
-Dependancy Injection
-
-Param Converter
-
-EventHandler (Middleware)
-
 **Workflow (simplifié)**
 
 ```mermaid
@@ -88,13 +76,23 @@ flowchart LR
 	I[...]
 	end
 ```
-![enter image description here](https://github.com/leahpar/imgs/raw/master/workflow.jpg)
+
+**La "magie" d'un framework**
+
+Annotations
+
+Dependancy Injection
+
+Param Converter
+
+EventHandler (Middleware)
+
 
 ## Installation
 
 ### Prérequis
 
-- [x] PHP 7/8
+- [x] PHP 8 !!!!!
 - [x] Base de données : MySQL / MariaDB / PostgreSQL / SQLite
 - [ ] Serveur web : Apache / Nginx
 - [ ] PhpMyAdmin ou autre
@@ -117,13 +115,13 @@ Bundles :
 
 **Création structure du projet**
 ```
-symfony new my_project_name --full
+symfony new my_project_name --webapp
 ```
 
 - `--version=xx` installe une version spécifique
-	- Symfony 6.0 (php8)
-	- Symfony 5.4 (php7)
-- `--full` installe directement plein de packages utiles
+  - Symfony 6.0 (php8)
+  - Symfony 5.4 (php7)
+- `--webapp` installe directement plein de packages utiles pour le web
 - `--no-git` Sans initialiser un repo git
 
 ```
@@ -160,7 +158,7 @@ cd my_project_name
 - Installation prérequis, Composer & Symfony
 - Création projet Symfony
 - démarrer le serveur web
-- Afficher la page par défaut de Symfony : 
+- Afficher la page par défaut de Symfony :
 
 ![It works !](https://github.com/leahpar/imgs/raw/master/homepage.jpg)
 
@@ -281,6 +279,7 @@ Les annotations permettent de "configurer" les composants dans les commentaires 
 
 ```php
 // PHP 7/8
+
 /**
  * @Route("/admin")
  * @IsGranted("ROLE_ADMIN")
@@ -290,6 +289,7 @@ public function adminPage() {...}
 
 ```php
 // PHP 8 => attributs
+
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
 public function adminPage() {...}
@@ -515,42 +515,7 @@ public function new(Post $post, Request $request, EntityManagerInterface $em)
     ]);
 }
 ```
->🔥Duplication de code !
 
-**2 EN 1 !**
-```php
-#[Route('/posts/new', name: 'post_new', methods: ['GET', 'POST'])]
-#[Route('/posts/{id}/edit', name: 'post_edit', methods: ['GET', 'POST'])]
-public function new(?Post $post, Request $request, EntityManagerInterface $em)
-{
-	$post = $post ?? new Post();
-
-    // Création formulaire
-    $form = $this->createForm(PostType::class, $post);
-
-    // "Remplissage" du formulaire depuis la requête
-    $form->handleRequest($request);
-
-	// Si formulaire soumis et valide
-    if ($form->isSubmitted() && $form->isValid()) {
-		
-		// ici, $post contient les données soumises
-
-        // On enregistre
-        $em->persist($post);
-        $em->flush();
-
-        // On redirige vers l'affichage du post par exemple
-        return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
-    }
-
-    // Si formulaire non soumis OU formulaire invalide
-    return $this->render('post/new.html.twig', [
-        'post' => $post,
-        'form' => $form->createView(),
-    ]);
-}
-```
 
 ### Exercice
 
@@ -722,21 +687,23 @@ Notre template se simplifie donc :
 ### Exercice
 
 1. Reprendre le `HelloController` en utilisant les templates twig.
- - `/helloworld` affiche `Hello World!`
- - `/hello?name=jean` affiche `Hello Jean!`
- - `/hello/jean` affiche `Hello Jean!`
+- `/helloworld` affiche `Hello World!`
+- `/hello?name=jean` affiche `Hello Jean!`
+- `/hello/jean` affiche `Hello Jean!`
 2. Ajouter une page similaire mais avec une méthode `POST`au lieu de `GET`
- - Formulaire html
- - `$request->request->get('name')`
+- Formulaire html
+- `$request->request->get('name')`
 
 
 ## Doctrine
+
+==Prérequis : § Injection de dépendances==
 
 ORM = **O**bject **R**elational **M**apping
 
 Permet l'abstraction de la base de donnée.
 
-On manipule des classes/objets (entités), pas des tables/lignes.
+On manipule des classes/objets (entités), **pas des tables/lignes**.
 
 **Références annotations doctrine :**
 https://www.doctrine-project.org/projects/doctrine-orm/en/2.9/reference/annotations-reference.html
@@ -798,8 +765,6 @@ php bin/console doctrine:schema:update --force
 
 Référence annotations :
 https://doctrine2.readthedocs.io/en/latest/reference/annotations-reference.html
-
-==Prérequis : § Injection de dépendances==
 
 ```php
 public function listPosts(EntityManagerInterface $em)
@@ -929,3 +894,301 @@ public function showPost(Post $post)
 
 
 ==GOTO: §Form==
+
+
+## Divers
+
+### Session
+
+```php
+public function page1(SessionInterface $session)
+{
+    $session->set('foo', 'bar');
+}
+```
+```php
+public function page2(SessionInterface $session)
+{
+    $foo = $session->get('foo', 'default');
+    // $foo = 'bar'
+}
+```
+
+### Messages flash
+
+```php
+// Controller
+public function index()
+{
+	$this->addFlash('notice','Yolo!');
+	$this->addFlash('error','Pas bien !');
+}
+```
+```twig
+{# twig #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="flash-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+```
+
+### Emails
+
+https://symfony.com/doc/current/mailer.html
+
+Configurer un serveur SMTP : `.env.local` => `MAILER_DSN=smtp://user:pass@host:port`
+
+>💡mailtrap.io (port 2525 disponible depuis le CESI)
+
+```php
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
+public function sendEmail(MailerInterface $mailer) {
+    $email = (new Email())
+        ->from('hello@example.com')
+        ->to('you@example.com')
+        ->subject('Time for Symfony Mailer!')
+        ->text('Sending emails is fun again!')
+        ->html('<p>See Twig integration for better HTML integration!</p>');
+    $mailer->send($email);
+    // ...
+}
+```
+
+### HTTP Client
+
+https://symfony.com/doc/current/http_client.html
+
+```php
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+public function httpCall(HttpClientInterface $client)
+{
+	$response = $client->request(
+            'GET',
+            'https://api.github.com/repos/symfony/symfony-docs'
+        );
+
+        $statusCode = $response->getStatusCode();
+        // $statusCode = 200
+        $contentType = $response->getHeaders()['content-type'][0];
+        // $contentType = 'application/json'
+        $content = $response->getContent();
+        // $content = '{"id":521583, "name":"symfony-docs", ...}'
+        $content = $response->toArray();
+        // $content = ['id' => 521583, 'name' => 'symfony-docs', ...]
+        // ...
+}
+```
+
+### Cache
+
+https://symfony.com/doc/current/cache.html
+
+```yaml
+# config/packages/cache.yaml
+framework:
+  cache:
+    pools:
+      my_cache_pool: # autowireable via "CacheInterface $myCachePool"
+        adapter: cache.adapter.filesystem
+```
+
+```php
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+
+public function test(CacheInterface $myCachePool)
+{
+    $value = $myCachePool->get('my_cache_key', function (ItemInterface $item) {
+        $item->expiresAfter(3600);
+
+        $result = rand(1, 1000); // Traitement très long et compliqué
+
+        return $result;
+    });
+
+    dump($value);
+    //$myCachePool->delete('my_cache_key');
+
+	// ...
+}
+```
+### Authentification
+
+https://symfony.com/doc/current/security.html
+
+### Paramétrage
+
+https://symfony.com/doc/current/configuration.html
+
+```bash
+# .env / .env.local
+GMAIL_PASSWORD=toto123
+```
+
+```yaml
+# config/services.yaml
+parameters:
+  gmail_password: '%env(GMAIL_PASSWORD)'
+    images_directory: '%kernel.project_dir%/public/uploads/'
+```
+
+```php
+// Controller
+public function randomPage()
+{
+	$gmailPasswd = $this->getParameter('gmail_password');
+	$imageDir = $this->getParameter('images_directory');
+	// ...
+}
+```
+
+
+### Upload de fichiers
+
+https://symfony.com/doc/current/controller/upload_file.html
+
+```php
+// Entity/Post.php
+class Post {
+	// ...
+	
+	#[ORM\Column(type: 'string', length: 255, nullable: true)]
+	public string $imageName;
+
+	// ...
+}
+```
+
+```php
+// Form/PostType.php
+
+// ...
+->add('imageFile', FileType::class, [
+    'label' => 'Image',
+    'mapped' => false,
+    'required' => false,
+    'constraints' => [
+        new File([
+            'maxSize' => '2M',
+            'mimeTypes' => ['image/*'],
+        ])
+    ],
+])
+```
+
+```php
+// Controller/BlogController.php
+
+// ...
+if ($form->isSubmitted() && $form->isValid()) {
+
+    // On récupère l'image uploadée
+    /** @var UploadedFile $imageFile */
+    $imageFile = $form->get('imageFile')->getData();
+
+    // Si image uploadée
+    if ($imageFile) {
+
+        // On lui génère un nom unique
+        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $originalExtension = pathinfo($imageFile->getClientOriginalName(), PATHINFO_EXTENSION);
+        $newFilename = $originalFilename . "-" . uniqid() . "." . $originalExtension;
+
+        try {
+            // on "enregistre" le fichier
+            $imageFile->move(
+                $this->getParameter('images_directory'),
+                $newFilename
+            );
+        } catch (FileException $e) {
+            // ...
+            $this->addFlash('error', 'Image pas enregistrée');
+        }
+
+        // Et on garde le nom de l'image
+        $post->imageName = $newFilename;
+    }
+
+    // $em->persist($post);
+    // $em->flush();
+    // return $this->redirectToRoute(...);
+}
+```
+
+```twig
+{# formulaire.html.twig #}
+...
+{{ form_row(form.imageFile) }}
+...
+```
+
+```twig
+{# post.html.twig #}
+...
+<img src="/uploads/{{ post.imageName }}">
+...
+```
+
+### API
+
+```php
+#[Route('/api/random', name: 'api_random')]
+public function getRandomNumber()
+{
+    $data = [
+        "randomNumber" => rand(1, 1000),
+    ];
+    return new JsonResponse($data);
+ }
+```
+
+Sérialisation basique :
+
+```php
+#[Route('/api/posts/{id}', name: 'api_post')]
+public function getPost(Post $post)
+{
+    return new JsonResponse($post);
+}
+```
+```json
+// /api/posts/19
+{
+  "id": 19,
+  "title": "Mon post N°19",
+  "content": "Lorem ipsum etc...",
+  "date": "2022-04-05T11:34:21+02:00",
+  "published": true
+}
+```
+
+Sérialization avancée :
+```php
+// Entity/User.php
+use use Symfony\Component\Serializer\Annotation\Ignore;
+class User {
+	// ...
+	#[ignore]
+	public string $password;
+	// ...
+}
+```
+```php
+#[Route('/api/users/{id}', name: 'api_user')]
+public function getPost(User $user, SerializerInterface $serializer)
+{
+    $json = $serializer->serialize($user, 'json');
+    return new JsonResponse($json, json: true);
+ }
+```
+
+
+### TODO
+
+- [ ] Recherche / filtres

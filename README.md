@@ -92,7 +92,7 @@ EventHandler (Middleware)
 
 ### Prérequis
 
-- [x] PHP 8 !!!!!
+- [x] PHP 7/8
 - [x] Base de données : MySQL / MariaDB / PostgreSQL / SQLite
 - [ ] Serveur web : Apache / Nginx
 - [ ] PhpMyAdmin ou autre
@@ -145,7 +145,7 @@ symfony server:stop
 
 **Création structure du projet**
 ```
-composer create-project symfony/website-skeleton my_project_name 5.4.*
+composer create-project symfony/website-skeleton my_project_name 6.1.*
 ```
 ```
 cd my_project_name

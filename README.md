@@ -43,7 +43,7 @@ $response->send();
 
 **MVC : Couche Contrôleur**
 
-Controller = Classe/fonction "finale" de traitement de la requête
+Controller = Classe/fonction de traitement de la requête
 
 Router = Sélectionne le contrôleur à appeler en fonction de la requête
 
@@ -79,23 +79,27 @@ flowchart LR
 
 **La "magie" d'un framework**
 
-Annotations
+Pour simplifier et automatiser les tâches
 
-Dependancy Injection
+- Annotations (= gestion de fonctionnalités par configuration)
+- Dependancy Injection (= aide au découpage du code, automatise l'initialisation)
+- Param Converter (= automatise des requêtes simples)
+- EventSubscriber (= aide au découpage du code)
+- etc...
 
-Param Converter
-
-EventHandler (Middleware)
 
 
 ## Installation
 
 ### Prérequis
 
+**technologies**
+
 - [x] PHP 7/8
 - [x] Base de données : MySQL / MariaDB / PostgreSQL / SQLite
 - [ ] Serveur web : Apache / Nginx
 - [ ] PhpMyAdmin ou autre
+- [ ] Git
 
 Bundles :
 
@@ -103,13 +107,14 @@ Bundles :
 - WAMP : https://www.wampserver.com/
 - MAMP : https://www.mamp.info/ ✅
 
-**Composer**
+**Composer** (gestionnaire de dépendances)
 
 - [x] https://getcomposer.org/download
 
-**Symfony CLI**
+**Symfony CLI** (serveur web + divers)
 
 - [ ] https://symfony.com/download
+
 
 ### Création d'un projet (Symfony CLI)
 
@@ -119,7 +124,7 @@ symfony new my_project_name --webapp
 ```
 
 - `--version=xx` installe une version spécifique
-  - Symfony 6.0 (php8)
+  - Symfony 6.1 (php8)
   - Symfony 5.4 (php7)
 - `--webapp` installe directement plein de packages utiles pour le web
 - `--no-git` Sans initialiser un repo git
@@ -150,6 +155,9 @@ composer create-project symfony/website-skeleton my_project_name 6.1.*
 ```
 cd my_project_name
 ```
+```
+composer install
+```
 
 ---
 
@@ -175,7 +183,7 @@ my_project_name/
 | 
 ├── bin/            # commandes (console)
 | 
-├── public/         # Ressources web
+├── public/         # Ressources web (répertoire exposé par le serveur web)
 │   |── css/
 │   |── js/
 │   |── ...
@@ -192,7 +200,7 @@ my_project_name/
 ├── translations/
 | 
 ├── var/           # Cache, logs...
-└── vendor/        # Packages installés
+└── vendor/        # Dépendances installés
 ```
 
 ## Configuration
@@ -222,21 +230,22 @@ APP_ENV=dev
 DATABASE_URL=mysql://jojo:passw0rd@localhost:3306/mydb
 SMTP_SERVER='smtp.fakemail.com'
 SMTP_PORT=4444
-SMTP_USER=jojo
-SMTP_PASS=passw0rd
+SMTP_USER=myuser
+SMTP_PASS=S3cur3d_Passw0rd
 ```
 ```bash
 # .env.local (non commité, en prod)
 APP_ENV=prod
 DATABASE_URL=mysql://user:MUHMHM324@14.213.32.112:3306/mydb
-#SMTP_SERVER='smtp.free.fr'
-#SMTP_PORT=1234
+SMTP_SERVER='smtp.free.fr'
+SMTP_PORT=1234
 SMTP_USER=U22_APPUSER
 SMTP_PASS=L2M9NU9ONUCY2
 ```
 
 **Configuration du projet :** `config/*.yaml`
 
+Configuration commune à tous les environnements :
 - Algo de hachage des mots de passe
 - Locale par défaut
 - Charset pour la connexion à la BDD
@@ -249,12 +258,8 @@ config/
 │   ├── doctrine.yaml
 │   ├── mailer.yaml
 │   ├── twig.yaml
-│   |── ...
-│   ├── dev/             # Config spécifique pour 'dev'
-│   │   │── cache.yaml
-│   │   └── ...
-│   ├── test/
-│   └── prod/
+│   └── ...
+├── services.yaml		# Config du projet
 └── ...
 ```
 
@@ -271,29 +276,6 @@ doctrine:
 
 ## Composants
 
-### Annotations
-
-Les annotations permettent de "configurer" les composants dans les commentaires (ou attributs à partir de php8)
-
-=> Moins de code, plus de lisibilité, plus de maintenabilité.
-
-```php
-// PHP 7/8
-
-/**
- * @Route("/admin")
- * @IsGranted("ROLE_ADMIN")
- */
-public function adminPage() {...}
-```
-
-```php
-// PHP 8 => attributs
-
-#[Route('/admin')]
-#[IsGranted('ROLE_ADMIN')]
-public function adminPage() {...}
-```
 
 ### Controller
 
@@ -322,6 +304,30 @@ class BlogController extends AbstractController
 - `$this->isGranted(...)` Vérifie les droits de l'utilisateur
 - `$this->addFlash(...)` Ajoute un message flash dans la session de l'utilisateur
 - ...
+
+### Annotations / Attributs
+
+Les annotations permettent de "configurer" les composants dans les commentaires (ou attributs à partir de php8)
+
+=> Moins de code, plus de lisibilité, plus de maintenabilité.
+
+```php
+// PHP 7/8
+
+/**
+ * @Route("/admin")
+ * @IsGranted("ROLE_ADMIN")
+ */
+public function adminPage() {...}
+```
+
+```php
+// PHP 8 => attributs
+
+#[Route('/admin')]
+#[IsGranted('ROLE_ADMIN')]
+public function adminPage() {...}
+```
 
 ### Router
 
@@ -516,7 +522,6 @@ public function new(Post $post, Request $request, EntityManagerInterface $em)
 }
 ```
 
-
 ### Exercice
 
 - Mettre à jour le contrôleur pour utiliser les Form.
@@ -635,6 +640,8 @@ Twig = contenu statique (html, json...) + syntaxe basée sur 3 éléments :
 <ul>
 {% for item in my_list %}
 	<li>{{ item }}</<li>
+{% else %}
+	<li>aucun élément dans la liste</li>
 {% endfor %}
 </ul>
 ```
@@ -684,15 +691,26 @@ Notre template se simplifie donc :
     <h1>Hello World!</h1>
 {% endblock %}
 ```
+
+`include` pour réutiliser des bouts de code
+```twig
+{# templates/mapage.html.twig #}
+{% include "menu.html.twig" %}
+```
+```twig
+{# templates/menu.html.twig #}
+<nav>
+	...
+</nav>
+```
+
+
 ### Exercice
 
 1. Reprendre le `HelloController` en utilisant les templates twig.
 - `/helloworld` affiche `Hello World!`
-- `/hello?name=jean` affiche `Hello Jean!`
 - `/hello/jean` affiche `Hello Jean!`
-2. Ajouter une page similaire mais avec une méthode `POST`au lieu de `GET`
-- Formulaire html
-- `$request->request->get('name')`
+2. Faire un peu de mise en page du "site" (avec l'héritage)
 
 
 ## Doctrine
@@ -1192,3 +1210,4 @@ public function getPost(User $user, SerializerInterface $serializer)
 ### TODO
 
 - [ ] Recherche / filtres
+- 

@@ -1,0 +1,10 @@
+header,footer,nav,.content {
+    width: 97%;
+    border: 2px solid green;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+header,footer {
+    background-color: khaki;
+}

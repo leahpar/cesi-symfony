@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Form\PostType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,9 +79,12 @@ class BlogController extends AbstractController
     ) {
         $post = $post ?? new Post();
 
-        if ($request->isMethod("POST")) {
-            $post->title = $request->request->get('title');
-            $post->content = $request->request->get('content');
+        $postForm = $this->createForm(PostType::class, $post);
+
+        $postForm->handleRequest($request);
+
+        if ($postForm->isSubmitted() && $postForm->isValid()) {
+
             $em->persist($post);
             $em->flush();
 
@@ -91,6 +95,7 @@ class BlogController extends AbstractController
 
         return $this->render('blog/new.html.twig', [
             'post' => $post,
+            'postForm' => $postForm->createView(),
         ]);
     }
 

@@ -2,19 +2,29 @@
 
 {% block body %}
 
+    {% if post.id == 0 %}
+        <h1>Nouveau post</h1>
+    {% else %}
+        <h1>Modification du post "{{ post.title }}"</h1>
+    {% endif %}
 
-    <form method="post">
-
-        <input name="title"
-               placeholder="title"
-               value="{{ post.title }}">
-        <br>
-        <textarea name="content"
-                  placeholder="content">{{ post.content }}</textarea>
-        <br>
-        <input type="submit">
-
-    </form>
-
+    {{ form_start(postForm) }}
+    <div>
+        {{ form_errors(postForm) }}
+    </div>
+    <div>
+        {{ form_row(postForm.title) }}
+    </div>
+    <p>
+        {{ form_label(postForm.content) }}
+        {{ form_widget(postForm.content) }}
+        {{ form_errors(postForm.content) }}
+    </p>
+    <div>
+        {{ form_label(postForm.author) }}
+        {{ form_widget(postForm.author) }}
+        {{ form_errors(postForm.author) }}
+    </div>
+    {{ form_end(postForm) }}
 
 {% endblock body %}

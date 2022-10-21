@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Random;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,14 @@ class HelloWorldController extends AbstractController
         ]);
         return $response;
 
+    }
+
+    #[Route('/random')]
+    public function random(Random $random)
+    {
+        $nombre = $random->getAnotherRandomNumber();
+        $response = new Response('<h1>'.$nombre.'</h1>');
+        return $response;
     }
 
 }

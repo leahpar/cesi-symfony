@@ -267,11 +267,11 @@ Exemple de fichier de configuration :
 ```yaml
 # config/packages/doctrine.yaml
 doctrine:
-    dbal:
-        connections:
-            default:
-                url: '%env(DATABASE_URL)%' # Utilise les variables d'env
-                charset: utf8
+  dbal:
+    connections:
+      default:
+        url: '%env(DATABASE_URL)%' # Utilise les variables d'env
+        charset: utf8
 ```
 
 ## Composants
@@ -593,10 +593,10 @@ On "externalise" le rendu de la page dans un template :
 ```html
 <html>
 <head>
-    <title>Hello World!</title>
+  <title>Hello World!</title>
 </head>
 <body>
-    <h1>Hello World!</h1>
+<h1>Hello World!</h1>
 </body>
 </html>
 ```
@@ -959,7 +959,7 @@ https://symfony.com/doc/current/mailer.html
 
 Configurer un serveur SMTP : `.env.local` => `MAILER_DSN=smtp://user:pass@host:port`
 
->💡mailtrap.io (port 2525 disponible depuis le CESI)
+>💡 mailtrap.io (port 2525 disponible depuis le CESI)
 
 ```php
 use Symfony\Component\Mailer\MailerInterface;
@@ -1053,7 +1053,7 @@ GMAIL_PASSWORD=toto123
 # config/services.yaml
 parameters:
   gmail_password: '%env(GMAIL_PASSWORD)'
-    images_directory: '%kernel.project_dir%/public/uploads/'
+  images_directory: '%kernel.project_dir%/public/uploads/'
 ```
 
 ```php
@@ -1206,8 +1206,21 @@ public function getPost(User $user, SerializerInterface $serializer)
  }
 ```
 
+### Import / export csv
 
-### TODO
+TODO...
 
-- [ ] Recherche / filtres
-- 
+Bonus : https://docs.google.com/spreadsheets/d/xxxxxxxxxxxx/export?format=csv&gid=0
+
+Bonus2 : Gestion de fichiers excel avec [phpspreadsheet](phpspreadsheet.readthedocs.io)
+
+### EasyAdmin
+
+https://symfony.com/bundles/EasyAdminBundle/current/index.html
+
+Générateur de CRUD++
+
+### Traductions
+
+https://symfony.com/doc/current/translation.html
+

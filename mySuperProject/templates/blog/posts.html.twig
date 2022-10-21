@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Mes posts</h1>
+
+    {% for post in posts %}
+
+        <div>
+            <a href="{{ path('blog_post', {id: post.id}) }}">
+                <h2>[{{ post.id }}] {{ post.title }}</h2>
+            </a>
+            <p>{{ post.date|date('d/m/Y H:i') }}</p>
+        </div>
+
+    {% endfor %}
+
+
+{% endblock body %}

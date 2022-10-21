@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <form method="post">
+
+        <input name="title"
+               placeholder="title"
+               value="{{ post.title }}">
+        <br>
+        <textarea name="content"
+                  placeholder="content">{{ post.content }}</textarea>
+        <br>
+        <input type="submit">
+
+    </form>
+
+
+{% endblock body %}

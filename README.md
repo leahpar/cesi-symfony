@@ -593,10 +593,10 @@ On "externalise" le rendu de la page dans un template :
 ```html
 <html>
 <head>
-  <title>Hello World!</title>
+    <title>Hello World!</title>
 </head>
 <body>
-<h1>Hello World!</h1>
+    <h1>Hello World!</h1>
 </body>
 </html>
 ```
@@ -951,6 +951,28 @@ public function index()
         </div>
     {% endfor %}
 {% endfor %}
+```
+
+### Migrations
+
+Plus propre que les `php bin/console doctrine:database:update` et plus adapté s'il y a des requêtes manuelles à faire.
+
+Pour générer un script de migration contenant les changements des entités (équivalent `--dump-sql`:
+
+```bash
+php bin/console make:migration
+```
+
+Pour créer un script de migration vierge :
+
+```bash
+php bin/console doctrine:migrations:generate
+```
+
+Pour exécuter les migrations (équivalent `--force`) :
+
+```bash
+php bin/console doctrine:migrations:migrate
 ```
 
 ### Emails

@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Form\PostType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,15 +27,20 @@ class BlogController extends AbstractController
         return $response;
     }
 
-    #[Route('/{id}', name: 'post', requirements: ['id' => '\d+'])]
-    public function getPost(Post $post, EntityManagerInterface $em)
+    #[Route('/{id}.{_format}', name: 'post', requirements: ['id' => '\d+'], defaults: ['_format' => 'html'])]
+    public function getPost(Post $post, Request $request)
     {
         /** @var Post $post */
         //$post = $em->getRepository(Post::class)->findOneBy(['id' => $id]);
 
-        return $this->render('blog/post.html.twig', [
-            'post' => $post,
-        ]);
+        if ($request->getRequestFormat() == 'json') {
+            return new JsonResponse($post);
+        }
+        else {
+            return $this->render('blog/post.html.twig', [
+                'post' => $post,
+            ]);
+        }
     }
 
     #[Route('/{id}/delete', name: 'post_delete')]

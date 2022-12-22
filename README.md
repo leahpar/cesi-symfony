@@ -53,7 +53,7 @@ Service (Helper) = Classe dédiée à une tâche (gestion des logs, gestion bdd,
 
 Entity = Donnée manipulée & persistée
 
-Doctrine = Entity Manager = Manipulation des données / abstraction de la base de données
+Doctrine (ORM) = Entity Manager = Manipulation des données / abstraction de la base de données
 
 **MVC : Couche Vue**
 
@@ -95,7 +95,7 @@ Pour simplifier et automatiser les tâches
 
 **technologies**
 
-- [x] PHP 7/8
+- [x] PHP ~~7~~/8
 - [x] Base de données : MySQL / MariaDB / PostgreSQL / SQLite
 - [ ] Serveur web : Apache / Nginx
 - [ ] PhpMyAdmin ou autre
@@ -106,6 +106,7 @@ Bundles :
 - XAMPP : https://www.apachefriends.org/
 - WAMP : https://www.wampserver.com/
 - MAMP : https://www.mamp.info/ ✅
+- Laragon : https://laragon.org/ 
 
 **Composer** (gestionnaire de dépendances)
 
@@ -156,7 +157,7 @@ composer create-project symfony/website-skeleton my_project_name 6.1.*
 cd my_project_name
 ```
 ```
-composer install
+composer require webapp
 ```
 
 ---
@@ -178,8 +179,8 @@ my_project_name/
 ├── composer.lock   # Liste des packages installés
 | 
 ├── config/         # configuration du projet
-├── .env            # configuration de l'environnement (défaut)
-├── .env.local      # configuration de l'environnement (local)
+├── .env            # configuration de l'environnement (défaut) => fichier commité
+├── .env.local      # configuration de l'environnement (local) => fichier non commité
 | 
 ├── bin/            # commandes (console)
 | 
@@ -267,11 +268,11 @@ Exemple de fichier de configuration :
 ```yaml
 # config/packages/doctrine.yaml
 doctrine:
-  dbal:
-    connections:
-      default:
-        url: '%env(DATABASE_URL)%' # Utilise les variables d'env
-        charset: utf8
+    dbal:
+        connections:
+            default:
+                url: '%env(DATABASE_URL)%' # Utilise les variables d'env
+                charset: utf8
 ```
 
 ## Composants
@@ -315,7 +316,8 @@ Les annotations permettent de "configurer" les composants dans les commentaires 
 // PHP 7/8
 
 /**
- * @Route("/admin")
+ * bla bla bla
+ * @Route("/admin")		<= Utiliser des doubles quotes !
  * @IsGranted("ROLE_ADMIN")
  */
 public function adminPage() {...}
@@ -347,10 +349,10 @@ class BlogController extends AbstractController
 	#[Route('/posts', name: 'post_list')]
 	public function listPosts(Request $request) {...}
 
-	#[Route('posts/{id}', name: 'post_show', requirements: ['id' => '\d+'])]
+	#[Route('/posts/{id}', name: 'post_show', requirements: ['id' => '\d+'])]
 	public function showPost(int $id) {...}
 
-	#[Route('posts/{slug}/edit', name: 'post_edit', methods: ['GET', 'POST'])]
+	#[Route('/posts/{slug}/edit', name: 'post_edit', methods: ['GET', 'POST'])]
 	public function editPost(string $slug) {...}
 }
 ```
@@ -551,6 +553,7 @@ use App\Service\Mailer;
 
 class BlogController extends AbstractController
 {
+	#[Route(...)]
 	public function sendEmail(Mailer $mailer)
 	{
 		// ...
@@ -794,7 +797,7 @@ public function getPost42(EntityManagerInterface $em)
 {
 	// Sélection générique
 	$posts = $em->getRepository(Post::class)->findBy(['id' => 42]);
-	$post = $em->getRepository(Post::class)->findOneBy(['id' => 42]);
+	$post = $em->getRepository(Post::class)->findOneBy(['id' => 42, 'date' => '2022-12-22']);
 	// Sélection par ID
 	$post = $em->getRepository(Post::class)->find(42);
 	// Sélection "magique" find[One]By<Attribut>($value) :

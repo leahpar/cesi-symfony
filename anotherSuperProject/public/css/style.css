@@ -1,0 +1,21 @@
+body {
+    background-color: aliceblue;
+}
+
+header,footer,nav {
+    border: 2px solid coral;
+    background-color: aquamarine;
+    margin: 10px;
+    padding: 10px;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+.content {
+    border: 2px solid coral;
+    margin: 10px;
+    padding: 10px;
+}

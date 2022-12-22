@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    <h1>{{ post.title }}</h1>
+
+    <p>
+    rédigé le {{ post.date|date('d/m/Y') }}
+    à {{ post.date|date('H:i') }}
+    </p>
+
+    <p>
+        {{ post.content }}
+    </p>
+
+    <a href="{{ path('blog_list') }}">Retour à la liste des posts</a>
+
+{% endblock %}
+

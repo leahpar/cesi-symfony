@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+
+{% block content %}
+<h1>Les planètes</h1>
+
+<div>
+    {% for planete in planetes %}
+        <div>
+            <h2>{{ planete.nom }}</h2>
+            <p>Taille: {{ planete.taille }} km</p>
+            <p>Distance au soleil :
+            {{ planete.distance }} UA</p>
+            <a href="{{ path('planete_show', {id: planete.id}) }}">Voir</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock content %}

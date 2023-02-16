@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api', name: 'api_')]
+#[Route('/api-maison/', name: 'api_')]
 class ApiPlaneteController extends ApiController
 {
 
@@ -36,6 +36,5 @@ class ApiPlaneteController extends ApiController
         $items = $nasa->getPlaneteImages($planete);
         return $this->jsonResponse($planete, $items);
     }
-
 
 }

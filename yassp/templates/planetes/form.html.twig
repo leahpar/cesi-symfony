@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <form method="post">
+
+        {{ form_widget(form.nom, {attr: {
+            class: 'toto'
+        }}) }}
+        {{ form_errors(form.nom) }}
+        <br>
+        {{ form_widget(form.taille) }}
+        {{ form_errors(form.taille) }}
+        <br>
+        {{ form_widget(form.distance) }}
+        {{ form_errors(form.distance) }}
+        <br>
+        {{ form_widget(form.name) }}
+        {{ form_errors(form.name) }}
+        <br>
+
+        <input type="submit">
+
+    </form>
+
+
+{% endblock body %}

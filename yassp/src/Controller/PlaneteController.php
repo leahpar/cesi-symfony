@@ -3,27 +3,37 @@
 namespace App\Controller;
 
 use App\Entity\Planete;
+use App\Form\PlaneteType;
 use App\Service\NasaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PlaneteController extends AbstractController
 {
 
-    #[Route('/planetes/add', name: 'planete_add')]
-    public function add(EntityManagerInterface $em)
+    #[Route('/planetes/add', name: 'planete_add', methods: ['GET', 'POST'])]
+    public function add(Request $request, EntityManagerInterface $em)
     {
         $planete = new Planete();
-        $planete->nom = "Terre";
-        $planete->taille = 12000;
-        $planete->distance = 150000000;
+        $form = $this->createForm(PlaneteType::class, $planete);
 
-        $em->persist($planete);
-        $em->flush();
+        $form->handleRequest($request);
 
-        return new Response();
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $em->persist($planete);
+            $em->flush();
+
+            return $this->redirectToRoute('planete_show', [
+                'id' => $planete->id,
+            ]);
+        }
+
+        return $this->render('planetes/form.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/planetes', name: 'planetes_list')]
@@ -55,10 +65,36 @@ class PlaneteController extends AbstractController
         ]);
     }
 
+    #[Route('/planetes/{id}/edit', name: 'planete_edit', methods: ['GET', 'POST'])]
+    public function edit(Planete $planete, Request $request, EntityManagerInterface $em)
+    {
+        $form = $this->createForm(PlaneteType::class, $planete);
 
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
 
+            //$em->persist($planete);
+            $em->flush();
 
+            return $this->redirectToRoute('planete_show', [
+                'id' => $planete->id,
+            ]);
+        }
 
+        return $this->render('planetes/form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+
+    }
+
+    #[Route('/planetes/{id}/delete', name: 'planete_del')]
+    public function del(Planete $planete, EntityManagerInterface $em)
+    {
+        $em->remove($planete);
+        $em->flush();
+
+        return $this->redirectToRoute('planetes_list');
+    }
 
 }

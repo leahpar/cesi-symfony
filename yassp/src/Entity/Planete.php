@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PlaneteRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: PlaneteRepository::class)]
+#[ApiResource]
 class Planete
 {
     #[ORM\Id]
@@ -26,7 +27,8 @@ class Planete
     #[ORM\Column(length: 255, nullable: true)]
     public ?string $name = null;
 
-    #[Ignore]
-    public string $password = "toto123";
-
+    public function getId()
+    {
+        return $this->id;
+    }
 }

@@ -1,7 +1,7 @@
 {% extends "base.html.twig" %}
 
 
-{% block content %}
+{% block body %}
 
     <h1>{{ planete.nom }}</h1>
     <p>Taille: {{ planete.taille }} km</p>
@@ -16,5 +16,5 @@
 
     <a href="{{ path('planetes_list') }}">Retour</a>
 
-{% endblock content %}
+{% endblock body %}
 

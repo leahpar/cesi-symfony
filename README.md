@@ -106,7 +106,7 @@ Bundles :
 - XAMPP : https://www.apachefriends.org/
 - WAMP : https://www.wampserver.com/
 - MAMP : https://www.mamp.info/ ✅
-- Laragon : https://laragon.org/ 
+- Laragon : https://laragon.org/
 
 **Composer** (gestionnaire de dépendances)
 
@@ -268,11 +268,11 @@ Exemple de fichier de configuration :
 ```yaml
 # config/packages/doctrine.yaml
 doctrine:
-    dbal:
-        connections:
-            default:
-                url: '%env(DATABASE_URL)%' # Utilise les variables d'env
-                charset: utf8
+  dbal:
+    connections:
+      default:
+        url: '%env(DATABASE_URL)%' # Utilise les variables d'env
+        charset: utf8
 ```
 
 ## Composants
@@ -596,10 +596,10 @@ On "externalise" le rendu de la page dans un template :
 ```html
 <html>
 <head>
-    <title>Hello World!</title>
+  <title>Hello World!</title>
 </head>
 <body>
-    <h1>Hello World!</h1>
+<h1>Hello World!</h1>
 </body>
 </html>
 ```
@@ -1231,9 +1231,31 @@ public function getPost(User $user, SerializerInterface $serializer)
  }
 ```
 
+> 💡[FosRestBundle](https://github.com/FriendsOfSymfony/FOSRestBundle)
+
+> 💡[API Plateform](https://api-platform.com) en tant que Framework complet ou Bundle Symfony.
+
 ### Import / export csv
 
-TODO...
+
+```php
+// Lecture CSV
+// input.csv : "A,B,C"
+$data = fgetcsv('input.csv');
+
+// $data = [
+//   [ "A", "B", "C" ],
+// ];
+
+// Ecriture CSV
+$fp = fopen('output.csv', 'w');  
+foreach ($data as $fields) {
+	fputcsv($fp, $fields, ';');
+}
+fclose($fp);
+// output.csv : "A;B;C"
+```
+
 
 Bonus : https://docs.google.com/spreadsheets/d/xxxxxxxxxxxx/export?format=csv&gid=0
 

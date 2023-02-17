@@ -1,6 +1,7 @@
 {% if app.user %}
     {{ app.user.email }}
     <a href="{{ path('app_logout') }}">Déconnexion</a>
+    donnée sensible : {{ app.user.donneeSensible }}
 {% else %}
     <a href="{{ path('app_login') }}">Connexion</a>
 {% endif %}

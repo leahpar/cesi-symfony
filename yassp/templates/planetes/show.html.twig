@@ -4,6 +4,11 @@
 {% block body %}
 
     <h1>{{ planete.nom }}</h1>
+
+    {% if planete.galaxie %}
+        <h2>{{ planete.galaxie.nom }}</h2>
+    {% endif %}
+
     <p>Taille: {{ planete.taille }} km</p>
     <p>Distance au soleil : {{ planete.distance }} UA</p>
 

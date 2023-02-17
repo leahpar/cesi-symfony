@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Galaxie;
 use App\Entity\Planete;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -51,6 +53,13 @@ class PlaneteType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'placeholder' => 'name',
+                ]
+            ])
+            ->add('galaxie', EntityType::class, [
+                'class' => Galaxie::class,
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'galaxie',
                 ]
             ])
         ;

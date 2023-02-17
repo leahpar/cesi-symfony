@@ -8,6 +8,7 @@
     {% for planete in planetes %}
         <div>
             <h2>{{ planete.nom }}</h2>
+            <p>{{ planete.galaxie.nom??null }}</p>
             <p>Taille: {{ planete.taille }} km</p>
             <p>Distance au soleil :
             {{ planete.distance }} UA</p>

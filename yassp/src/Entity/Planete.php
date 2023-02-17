@@ -27,8 +27,23 @@ class Planete
     #[ORM\Column(length: 255, nullable: true)]
     public ?string $name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'planetes')]
+    private ?Galaxie $galaxie = null;
+
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getGalaxie(): ?Galaxie
+    {
+        return $this->galaxie;
+    }
+
+    public function setGalaxie(?Galaxie $galaxie): self
+    {
+        $this->galaxie = $galaxie;
+
+        return $this;
     }
 }

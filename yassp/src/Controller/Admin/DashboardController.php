@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Galaxie;
 use App\Entity\Planete;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -30,5 +31,6 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Planètes', 'fas fa-list', Planete::class);
+        yield MenuItem::linkToCrud('Galaxies', 'fas fa-list', Galaxie::class);
     }
 }

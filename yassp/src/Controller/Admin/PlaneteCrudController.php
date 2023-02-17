@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Planete;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -23,6 +24,7 @@ class PlaneteCrudController extends AbstractCrudController
             NumberField::new('taille'),
             NumberField::new('distance'),
             textField::new('name'),
+            AssociationField::new('galaxie')
         ];
     }
 }

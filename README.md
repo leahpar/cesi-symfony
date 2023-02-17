@@ -268,11 +268,11 @@ Exemple de fichier de configuration :
 ```yaml
 # config/packages/doctrine.yaml
 doctrine:
-  dbal:
-    connections:
-      default:
-        url: '%env(DATABASE_URL)%' # Utilise les variables d'env
-        charset: utf8
+    dbal:
+        connections:
+            default:
+                url: '%env(DATABASE_URL)%' # Utilise les variables d'env
+                charset: utf8
 ```
 
 ## Composants
@@ -596,10 +596,10 @@ On "externalise" le rendu de la page dans un template :
 ```html
 <html>
 <head>
-  <title>Hello World!</title>
+    <title>Hello World!</title>
 </head>
 <body>
-<h1>Hello World!</h1>
+    <h1>Hello World!</h1>
 </body>
 </html>
 ```
@@ -1271,3 +1271,41 @@ Générateur de CRUD++
 
 https://symfony.com/doc/current/translation.html
 
+### Faire des tests
+
+https://symfony.com/doc/current/testing.html
+
+Environnement de test :
+- `.env.test` & `.env.test.local`
+- `php bin/console --env=test <commandes>`
+
+- Tests unitaires avec `PHPUnit\Framework\TestCase`
+- Tests d'intégration avec `Symfony\Bundle\FrameworkBundle\Test\KernelTestCase`
+- Tests applicatifs avec `Symfony\Bundle\FrameworkBundle\Test\WebTestCase`
+
+
+### Evenements (ex Doctrine)
+
+https://symfony.com/doc/current/doctrine/events.html#doctrine-lifecycle-subscribers
+
+```php
+class UserEntitySubscriber implements EventSubscriberInterface
+{
+    public function getSubscribedEvents(): array
+    {
+        return [
+            Events::prePersist,
+            Events::preUpdate,
+        ];
+    }
+
+    public function prePersist(LifecycleEventArgs $args): void
+    {
+        $entity = $args->getObject();
+        if (!$entity instanceof User) {
+            return;
+        }
+        $user->someAttr = 42;
+    }
+}
+```

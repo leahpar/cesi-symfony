@@ -6,6 +6,7 @@ use App\Entity\Planete;
 use App\Form\PlaneteType;
 use App\Service\NasaService;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,8 +15,16 @@ class PlaneteController extends AbstractController
 {
 
     #[Route('/planetes/add', name: 'planete_add', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_AUTEUR')]
     public function add(Request $request, EntityManagerInterface $em)
     {
+        //$user = $this->getUser();
+        //if (!in_array('ROLE_ADMIN', $user->getRoles())) {
+        //    throw new AccessDeniedException('Acces interdit');
+        //}
+
+        //$this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $planete = new Planete();
         $form = $this->createForm(PlaneteType::class, $planete);
 
@@ -39,6 +48,9 @@ class PlaneteController extends AbstractController
     #[Route('/planetes', name: 'planetes_list')]
     public function list(EntityManagerInterface $em)
     {
+        //$user = $this->getUser();
+        //dump($user);
+
         $planetes = $em->getRepository(Planete::class)->findAll();
 
         return $this->render('planetes/list.html.twig', [

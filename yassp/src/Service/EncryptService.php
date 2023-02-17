@@ -9,6 +9,7 @@ class EncryptService
     {
         return "[CRYPTED]" . $s;
     }
+
     public function decrypt(?string $s): ?string
     {
         return str_replace("[CRYPTED]", "", $s);
